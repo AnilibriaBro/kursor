@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Курсор — открываю сайт…</title>
+<style>
+  :root { color-scheme: light dark; --bg: #fff7ed; --ink: #2b1607; --muted: #7c5a3c; --accent: #8b5cf6; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #140c24; --ink: #f3e8ff; --muted: #c4b5fd; --accent: #a78bfa; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+         font: 17px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 16px; }
+  main { max-width: 440px; text-align: center; }
+  h1 { font-size: 34px; margin: 0 0 8px; letter-spacing: .5px; }
+  p { margin: 8px 0; color: var(--muted); }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); margin: 0 3px;
+         animation: b 1s infinite ease-in-out; }
+  .dot:nth-child(2) { animation-delay: .15s; } .dot:nth-child(3) { animation-delay: .3s; }
+  @keyframes b { 0%, 80%, 100% { transform: scale(.5); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  a.btn { display: inline-block; margin-top: 14px; padding: 12px 22px; border-radius: 999px; background: var(--accent);
+          color: #fff; text-decoration: none; font-weight: 600; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Курсор</h1>
+  <div id="wait"><p>Открываю сайт</p><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div id="fail" hidden>
+    <p>Сайт сейчас недоступен — компьютер, на котором он работает, выключен или без интернета.</p>
+    <p>Попробуйте через несколько минут.</p>
+    <a class="btn" href="" onclick="location.reload(); return false;">Попробовать ещё раз</a>
+  </div>
+  <noscript><p>Включите JavaScript, чтобы открыть сайт.</p></noscript>
+</main>
+<script>
+  // Адрес сайта меняется (временный туннель), поэтому храним его в link.txt рядом;
+  // окно туннеля на компьютере само обновляет этот файл. Берём свежий, мимо кэша.
+  (async () => {
+    const ok = /^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/?$/;
+    try {
+      const r = await fetch('link.txt?t=' + Date.now(), { cache: 'no-store' });
+      const url = (await r.text()).trim();
+      if (r.ok && ok.test(url)) { location.replace(url); return; }
+    } catch (e) { /* нет сети */ }
+    document.getElementById('wait').hidden = true;
+    document.getElementById('fail').hidden = false;
+  })();
+</script>
+</body>
+</html>
